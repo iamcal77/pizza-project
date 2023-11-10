@@ -47,7 +47,7 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.get('https://charity-0d32.onrender.com/users');
+      const response = await axios.get('/users');
       const users = response.data.users;
 
       const user = users.find((u) => u.email === formData.email && u.password === formData.password);

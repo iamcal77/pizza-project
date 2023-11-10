@@ -2,7 +2,7 @@
 from flask_migrate import Migrate
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from models import db, Restaurant, Pizza, RestaurantPizza
+from models import db, User, Restaurant, Pizza, RestaurantPizza
 
 app = Flask(__name__)
 
@@ -19,6 +19,39 @@ CORS(app)
 @app.route('/')
 def index():
     return "Welcome to the Pizza Restaurant App"
+
+@app.route('/users', methods=['GET'])
+def get_all_users():
+    users = User.query.all()
+    serialized_users = [{'id': user.id, 'username': user.username, 'email': user.email,
+                         'password': user.password, 'phonenumber': user.phonenumber} for user in users]
+    return jsonify({'users': serialized_users})
+
+@app.route('/users', methods=['POST'])
+def create_user():
+    user_data = request.get_json()
+
+    # Ensure required data is provided
+    if 'username' not in user_data or 'email' not in user_data or 'password' not in user_data:
+        return jsonify({'message': 'Username, email, and password are required'}), 400
+
+    # Check if the user already exists
+    existing_user = User.query.filter_by(email=user_data['email']).first()
+    if existing_user:
+        return jsonify({'message': 'User with this email already exists'}), 400
+
+    new_user = User(
+        username=user_data['username'],
+        email=user_data['email'],
+        password=user_data['password'],
+        phonenumber=user_data.get('phonenumber')
+    )
+
+    db.session.add(new_user)
+    db.session.commit()
+
+    return jsonify({'message': 'User created successfully', 'user_id': new_user.id}), 201
+
 
 @app.route('/restaurants', methods=['GET'])
 def get_restaurants():
