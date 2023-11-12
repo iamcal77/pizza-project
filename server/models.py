@@ -67,8 +67,8 @@ class Pizza(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), nullable=False)
     ingredients = db.Column(db.String(255), nullable=False)
-    restaurants = relationship(
-        "Restaurant", secondary="restaurant_pizza", back_populates="pizzas")
+    image_url = db.Column(db.String(1024))  # New field for image URL
+    restaurants = relationship("Restaurant", secondary="restaurant_pizza", back_populates="pizzas")
 
     @validates('price')
     def validate_price(self, key, price):

@@ -67,7 +67,7 @@ def get_restaurants():
 def get_restaurant_pizzas():
     restaurant_pizzas = RestaurantPizza.query.all()
     restaurant_pizza_data = [
-        {"id": restaurant_pizza.id, "restaurant_id": restaurant_pizza.restaurant.id,  "pizza_id": restaurant_pizza.pizza.id, "price": restaurant_pizza.price}
+        {"id": restaurant_pizza.id, "restaurant_id": restaurant_pizza.restaurant.id,  "pizza_id": restaurant_pizza.pizza.id, "price": restaurant_pizza.price, "image_url": restaurant_pizza.image_url}
             
         for restaurant_pizza in restaurant_pizzas
     ]
@@ -78,7 +78,7 @@ def get_restaurant_pizzas():
 def get_pizzas():
     pizzas = Pizza.query.all()
     pizza_data = [
-        {"id": pizza.id, "name": pizza.name, "ingredients": pizza.ingredients}
+        {"id": pizza.id, "name": pizza.name, "ingredients": pizza.ingredients, "image_url": pizza.image_url}
         for pizza in pizzas
     ]
     return jsonify(pizza_data)
@@ -126,21 +126,20 @@ def create_restaurant_pizza():
 
 @app.route('/pizzas', methods=['POST'])
 def create_pizza():
-    data = request.json
+    data = request.get_json()
     name = data.get('name')
     ingredients = data.get('ingredients')
-    
+    image_url = data.get('image_url')  # Get image url from request data
 
-    if not (name and ingredients ):
+    if not (name and ingredients):
         return jsonify({"errors": ["Validation errors"]}), 400
 
-   
-    pizza = Pizza(name=name, ingredients=ingredients)
+    pizza = Pizza(name=name, ingredients=ingredients, image_url=image_url)  # Pass image url when creating pizza
 
     db.session.add(pizza)
     db.session.commit()
 
-    return jsonify({"id": pizza.id, "name": pizza.name, "ingredients": pizza.ingredients}), 201
+    return jsonify({"id": pizza.id, "name": pizza.name, "ingredients": pizza.ingredients, "image_url": pizza.image_url}), 201
 
 if __name__ == '__main__':
     with app.app_context():

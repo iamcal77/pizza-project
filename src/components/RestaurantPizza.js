@@ -6,6 +6,7 @@ function PizzaForm({ onPizzaAdded }) {
     name: '',
     ingredients: '',
     price: '',
+    image_url: '',  // New field for image URL
   });
 
   const handleChange = (e) => {
@@ -18,10 +19,6 @@ function PizzaForm({ onPizzaAdded }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Send the form data to the server to add the pizza
-    // For example, using fetch or axios
-
-    // Assuming the API endpoint is /pizzas and supports POST request
     fetch('/pizzas', {
       method: 'POST',
       headers: {
@@ -31,13 +28,12 @@ function PizzaForm({ onPizzaAdded }) {
     })
       .then((response) => response.json())
       .then((data) => {
-        // Call the onPizzaAdded function passed from the parent component
         onPizzaAdded(data);
-        // Clear the form after adding the pizza
         setFormData({
           name: '',
           ingredients: '',
           price: '',
+          image_url: '',  // Reset image URL field
         });
       })
       .catch((error) => console.error('Error adding pizza:', error));
@@ -79,6 +75,16 @@ function PizzaForm({ onPizzaAdded }) {
             value={formData.price}
             onChange={handleChange}
             required
+          />
+        </div>
+        <div>
+          <label htmlFor="image_url">Image URL:</label>
+          <input
+            type="text"
+            id="image_url"
+            name="image_url"
+            value={formData.image_url}
+            onChange={handleChange}
           />
         </div>
         <button type="submit">Add Pizza</button>
